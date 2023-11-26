@@ -17,20 +17,25 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.weatherassist.components.HumidityCard
 import com.example.weatherassist.components.TodayCard
 import com.example.weatherassist.components.WeatherAppBar
 import com.example.weatherassist.components.WeeklyDetail
 import com.example.weatherassist.data.DataOrException
 import com.example.weatherassist.model.Weather
+import com.example.weatherassist.repository.WeatherRepository
 import com.example.weatherassist.util.timeFormat
 import com.example.weatherassist.viewModel.MainViewModel
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel, city: String?) {
 
@@ -136,3 +141,5 @@ fun MainScreenContent(
         )
     }
 }
+
+
