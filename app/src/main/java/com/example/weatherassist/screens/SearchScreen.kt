@@ -1,6 +1,6 @@
 package com.example.weatherassist.screens
 
-
+// Import necessary dependencies
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -48,6 +48,10 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
 
@@ -67,9 +71,7 @@ fun requestLocationUpdates(
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val locationRequest = LocationRequest.create().apply {
-            interval = 10000 // 10 seconds
-            fastestInterval = 5000 // 5 seconds
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
         }
 
         val locationCallback = object : LocationCallback() {
@@ -106,6 +108,7 @@ fun SearchScreen(
                 requestLocationUpdates(
                     context = context,
                     onLocationResult = { location ->
+
                         // Handle the user's current location (in string format)
                         val latitude = location.latitude
                         val longitude = location.longitude
@@ -116,10 +119,17 @@ fun SearchScreen(
                             val addresses = geocoder.getFromLocation(latitude, longitude, 1)
                             if (addresses != null) {
                                 if (addresses.isNotEmpty()) {
-                                    val country = addresses[0].countryCode
-                                    val city = addresses[0]?.locality
-                                    val locationString = "City: $city,Country Code: $country, Lat: $latitude, Long: $longitude"
+                                    val country = addresses[0].countryName
+                                    val city = addresses[0].adminArea
+                                    val area = addresses[0].subLocality
+                                    val locationString = "Area: $area, City: $city, Country Name: $country"
+
                                     Toast.makeText(context, locationString, Toast.LENGTH_SHORT).show()
+
+                                    // Use CoroutineScope to delay the execution for 8 seconds
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        delay(8000)
+                                    }
                                 } else {
                                     Toast.makeText(context, "Unable to get city information", Toast.LENGTH_SHORT).show()
                                 }
@@ -132,7 +142,7 @@ fun SearchScreen(
                     onPermissionDenied = {
                         // Handle the case where the user denies location permission
                         Toast.makeText(
-                           context,
+                            context,
                             "Location permission denied",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -241,7 +251,6 @@ fun SearchField(
         }
     )
 }
-
 
 @Composable
 fun LocateMeButton(locationPermissionLauncher: ActivityResultLauncher<String>) {
