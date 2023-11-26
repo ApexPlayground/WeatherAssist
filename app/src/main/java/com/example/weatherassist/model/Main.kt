@@ -1,31 +1,23 @@
 package com.example.weatherassist.model
 
-// Define a data class named "Main" representing weather-related information
+// Declare a data class representing main weather information
 data class Main(
-    // Apparent temperature in Kelvin
+    // "Feels Like" temperature in degrees Celsius
     val feels_like: Double,
-
-    // Ground level atmospheric pressure in hPa (hectopascals)
+    // Ground level atmospheric pressure in hPa
     val grnd_level: Int,
-
     // Humidity percentage
     val humidity: Int,
-
-    // Atmospheric pressure in hPa (hectopascals)
+    // Atmospheric pressure in hPa
     val pressure: Int,
-
-    // Sea level atmospheric pressure in hPa (hectopascals)
+    // Sea level atmospheric pressure in hPa
     val sea_level: Int,
-
-    // Temperature in Kelvin
+    // Temperature in degrees Celsius
     val temp: Double,
-
-    // Temperature correction due to cloudiness in Kelvin
+    // Temperature variation from the previous three hours in degrees Celsius
     val temp_kf: Double,
-
-    // Maximum temperature in Kelvin
+    // Maximum temperature in degrees Celsius
     val temp_max: Double,
-
-    // Minimum temperature in Kelvin
+    // Minimum temperature in degrees Celsius
     val temp_min: Double
 )
