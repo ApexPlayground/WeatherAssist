@@ -1,19 +1,15 @@
 package com.example.weatherassist.model
 
-// Define a data class named "Weather" representing weather information
+// Declare a data class representing weather-related information
 data class Weather(
-    // Information about the city
+    // Details about the city
     val city: City,
-
-    // Number of forecasted time periods
+    // Count of data points returned
     val cnt: Int,
-
-    // Status code from the server response
+    // Cod is the HTTP response code
     val cod: String,
-
-    // List of weather details for different time periods
+    // List of weather details for multiple time intervals
     val list: List<WeatherDetails>,
-
-    // Message from the server response
+    // Message information
     val message: Int
 )
