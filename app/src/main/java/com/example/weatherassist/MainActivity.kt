@@ -44,92 +44,40 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-
+    //private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
 
 
-//        val permissionsToRequest = arrayOf(
+//                permissionLauncher = registerForActivityResult(
+//                    ActivityResultContracts.RequestMultiplePermissions()
+//                ) {
 //
-//                Manifest.permission.ACCESS_FINE_LOCATION,
-//                Manifest.permission.ACCESS_COARSE_LOCATION,
 //
-//        )
+//                }
+//                permissionLauncher.launch(
+//                    arrayOf(
+//                        Manifest.permission.ACCESS_FINE_LOCATION,
+//                        Manifest.permission.ACCESS_COARSE_LOCATION,
+//                    )
+//                )
+//
+//
+
+
 
 
 
         setContent {
-//            WeatherAssistTheme{
-//                val viewModel = viewModel<MainViewModel>()
-//                val dialogQueue = viewModel.visiblePermissionDialogQueue
-//
-//                val locationPermissionResultLauncher = rememberLauncherForActivityResult(
-//                    contract = ActivityResultContracts.RequestMultiplePermissions(),
-//                    onResult = { perms ->
-//                        permissionsToRequest.forEach { permission ->
-//                            viewModel.onPermissionResult(
-//                                permission = permission,
-//                                isGranted = perms[permission] == true
-//                            )
-//                        }
-//                    }
-//                )
-//
-//                Column(
-//                    modifier = Modifier.fillMaxSize(),
-//                    verticalArrangement = Arrangement.Center,
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//
-//                    Spacer(modifier = Modifier.height(16.dp))
-//                    Button(onClick = {
-//                        locationPermissionResultLauncher.launch(permissionsToRequest)
-//                    }) {
-//                        Text(text = "Request multiple permission")
-//                    }
-//                }
-//
-//                dialogQueue
-//                    .reversed()
-//                    .forEach { permission ->
-//                        PermissionDialog(
-//                            permissionTextProvider = when (permission) {
-//
-//                                Manifest.permission.ACCESS_FINE_LOCATION -> {
-//                                    userLocationPermission()
-//                                }
-//                                Manifest.permission.ACCESS_COARSE_LOCATION -> {
-//                                    userLocationPermission()
-//                                }
-//                                else -> return@forEach
-//                            },
-//                            isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-//                                permission
-//                            ),
-//                            onDismiss = viewModel::dismissDialog,
-//                            onOkClick = {
-//                                viewModel.dismissDialog()
-//                                locationPermissionResultLauncher.launch(
-//                                    arrayOf(permission)
-//                                )
-//                            },
-//                            onGoToAppSettingsClick = ::openAppSettings
-//                        )
-//                    }
-//            }
-
-
-
-
-
-
             WeatherAssistTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -142,16 +90,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    companion object {
+        fun createLocationPermissionLauncher() {
+             lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+        }
+    }
 
 
 }
 
-//fun Activity.openAppSettings() {
-//    Intent(
-//        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//        Uri.fromParts("package", packageName, null)
-//    ).also(::startActivity)
-//}
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
