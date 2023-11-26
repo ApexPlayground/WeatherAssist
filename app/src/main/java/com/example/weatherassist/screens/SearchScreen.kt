@@ -43,6 +43,9 @@ import androidx.navigation.NavController
 import com.example.weatherassist.MainActivity
 import com.example.weatherassist.components.WeatherAppBar
 import android.provider.Settings
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.ui.Alignment
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -173,8 +176,7 @@ fun SearchScreen(
             isMainScreen = false,
         )
 
-        // Button to locate the user
-        LocateMeButton(locationPermissionLauncher)
+
 
         // SearchField is a custom component for the search field
         SearchField(
@@ -191,6 +193,9 @@ fun SearchScreen(
                 }
             }
         )
+
+        // Button to locate the user
+        LocateMeButton(locationPermissionLauncher)
     }
 }
 
@@ -254,25 +259,33 @@ fun SearchField(
 
 @Composable
 fun LocateMeButton(locationPermissionLauncher: ActivityResultLauncher<String>) {
-    Button(
-        onClick = {
-            // Call the requestLocation function when the button is clicked
-            locationPermissionLauncher.launch(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-            )
-        },
-        modifier = Modifier.padding(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Icon(
-            imageVector = Icons.Default.Place,
-            contentDescription = null,
-            modifier = Modifier
-                .size(24.dp)
-                .padding(end = 8.dp)
-        )
-        Text(text = "Locate Me")
+        Button(
+            onClick = {
+                // Call the requestLocation function when the button is clicked
+                locationPermissionLauncher.launch(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                )
+            },
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Place,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+            )
+            Text(text = "Locate Me")
+        }
     }
 }
+
 
 fun Activity.openAppSettings() {
     Intent(
