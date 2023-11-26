@@ -49,34 +49,11 @@ import androidx.core.view.WindowCompat
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    //private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-
-
-//                permissionLauncher = registerForActivityResult(
-//                    ActivityResultContracts.RequestMultiplePermissions()
-//                ) {
-//
-//
-//                }
-//                permissionLauncher.launch(
-//                    arrayOf(
-//                        Manifest.permission.ACCESS_FINE_LOCATION,
-//                        Manifest.permission.ACCESS_COARSE_LOCATION,
-//                    )
-//                )
-//
-//
-
-
-
-
-
         setContent {
             WeatherAssistTheme {
                 // A surface container using the 'background' color from the theme
@@ -90,16 +67,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    companion object {
-        fun createLocationPermissionLauncher() {
-             lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
-        }
-    }
-
 
 }
-
-
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -108,7 +77,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
 
 @Preview(showBackground = true)
 @Composable
