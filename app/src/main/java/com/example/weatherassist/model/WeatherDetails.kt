@@ -1,34 +1,25 @@
 package com.example.weatherassist.model
 
-// Define a data class named "WeatherDetails" representing detailed weather information
+// Declare a data class representing detailed weather information for a specific time interval
 data class WeatherDetails(
     // Cloud information
     val clouds: Clouds,
-
-    // Time of data forecasted in Unix timestamp
+    // Time of the forecasted data, in seconds since 1970
     val dt: Int,
-
     // Date and time in text format
     val dt_txt: String,
-
-    // Main weather-related information
+    // Main weather information
     val main: Main,
-
-    // Probability of precipitation as a percentage
+    // Probability of precipitation
     val pop: Double,
-
     // Rain information
     val rain: Rain,
-
-    // System-related information
+    // System information
     val sys: Sys,
-
     // Visibility in meters
     val visibility: Int,
-
     // List of weather conditions
     val weather: List<WeatherX>,
-
     // Wind information
     val wind: Wind
 )
