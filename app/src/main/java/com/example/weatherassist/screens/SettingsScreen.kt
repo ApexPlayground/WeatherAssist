@@ -1,5 +1,6 @@
 package com.example.weatherassist.screens
 
+// Import necessary dependencies
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,43 +39,52 @@ import com.example.weatherassist.components.WeatherAppBar
 import com.example.weatherassist.viewModel.PreferencesViewModel
 import kotlinx.coroutines.launch
 
+// Composable function for the SettingsScreen, responsible for displaying user preferences.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
     preferencesViewModel: PreferencesViewModel
 ) {
+    // State to manage the bottom sheet for selecting the unit system.
     val sheetState = rememberModalBottomSheetState()
+
+    // Collecting default city and unit from PreferencesViewModel
     val defaultCity = preferencesViewModel.defaultCity.collectAsState().value
     val defaultUnit = preferencesViewModel.defaultUnit.collectAsState().value
 
+    // State to control the visibility of the custom dialog for setting the default city.
     val showDialog = remember {
         mutableStateOf(false)
     }
 
+    // Scaffold composable providing the app structure with a top app bar.
     Scaffold(
         topBar = {
             WeatherAppBar(navController = navController, isMainScreen = false, title = "Settings")
         }
     ) {
+        // State to manage the visibility of the unit system bottom sheet.
         val openUnitSheet = remember {
             mutableStateOf(false)
         }
 
-        if(showDialog.value){
-            CustomDialog(setShowDialog = { showDialog.value = it}) {city->
+        // Display the custom dialog for setting the default city when showDialog is true.
+        if (showDialog.value) {
+            CustomDialog(setShowDialog = { showDialog.value = it }) { city ->
                 preferencesViewModel.saveDefaultCity(city)
                 showDialog.value = false
             }
         }
 
-
+        // Main column for displaying various user preferences.
         Column(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize()
                 .padding(10.dp)
         ) {
+            // Row for the dynamic theme toggle switch.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,18 +92,21 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
+                // Displaying the title and the switch for the dynamic theme.
                 val switchState = preferencesViewModel.isDefaultThemeDynamic.collectAsState()
                 var switch = switchState.value
-
                 Text("Dynamic Theme", style = MaterialTheme.typography.titleMedium)
-                Switch(checked = switch, onCheckedChange = {
-                    switch = it
-                    preferencesViewModel.saveDynamicTheme(switch)
-
-                }, modifier = Modifier.padding(end = 10.dp))
+                Switch(
+                    checked = switch,
+                    onCheckedChange = {
+                        switch = it
+                        preferencesViewModel.saveDynamicTheme(switch)
+                    },
+                    modifier = Modifier.padding(end = 10.dp)
+                )
             }
 
+            // Row for selecting the unit system with a clickable area.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,26 +117,19 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
+                // Displaying the title, default unit, and arrow icon for the unit system.
                 Text("Unit System", style = MaterialTheme.typography.titleMedium)
-
                 Row(verticalAlignment = Alignment.CenterVertically) {
-
                     Text(text = defaultUnit, modifier = Modifier.alpha(0.8f))
-
                     Icon(
                         Icons.Default.KeyboardArrowRight,
                         contentDescription = null,
                         modifier = Modifier.padding(start = 4.dp, end = 5.dp)
                     )
                 }
-
-
             }
 
-
-
-
+            // Row for setting the default city with a clickable area.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -133,15 +139,11 @@ fun SettingsScreen(
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
-
             ) {
-
+                // Displaying the title, default city, and arrow icon for setting the default city.
                 Text("Default City", style = MaterialTheme.typography.titleMedium)
-
                 Row(verticalAlignment = Alignment.CenterVertically) {
-
                     Text(text = defaultCity, modifier = Modifier.alpha(0.8f))
-
                     Icon(
                         Icons.Default.KeyboardArrowRight,
                         contentDescription = null,
@@ -151,24 +153,22 @@ fun SettingsScreen(
             }
         }
 
+        // Displaying the unit system bottom sheet when openUnitSheet is true.
         if (openUnitSheet.value) {
             ModalBottomSheet(
                 onDismissRequest = {
                     openUnitSheet.value = false
                 },
                 sheetState = sheetState,
-
-                ) {
-
+            ) {
+                // Content of the unit system bottom sheet.
                 UnitSheetContent(preferencesViewModel, openUnitSheet, sheetState)
-
             }
         }
-
-
     }
 }
 
+// Composable function for the content of the unit system bottom sheet.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitSheetContent(
@@ -176,11 +176,15 @@ fun UnitSheetContent(
     openBottomSheet: MutableState<Boolean>,
     sheetState: SheetState
 ) {
+    // CoroutineScope for launching asynchronous tasks.
     val scope = rememberCoroutineScope()
+
+    // Column for displaying buttons to select the unit system.
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Button for selecting Imperial unit system.
         Button(
             onClick = {
                 preferencesViewModel.saveDefaultUnit("Imperial")
@@ -188,19 +192,15 @@ fun UnitSheetContent(
                     sheetState.hide()
                     openBottomSheet.value = false
                 }
-
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                "Imperial",
-                fontSize = 20.sp
-            )
+            Text("Imperial", fontSize = 20.sp)
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
-
+        // Button for selecting Metric unit system.
         Button(
             onClick = {
                 preferencesViewModel.saveDefaultUnit("Metric")
@@ -211,14 +211,10 @@ fun UnitSheetContent(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                "Metric",
-                fontSize = 20.sp
-            )
+            Text("Metric", fontSize = 20.sp)
         }
     }
 
     Spacer(modifier = Modifier.height(10.dp))
-
 }
 
