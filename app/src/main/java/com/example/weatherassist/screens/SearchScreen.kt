@@ -131,7 +131,7 @@ fun SearchScreen(
 
                                     // Use CoroutineScope to delay the execution for 8 seconds
                                     CoroutineScope(Dispatchers.Main).launch {
-                                        delay(8000)
+                                        delay(10000)
                                     }
                                 } else {
                                     Toast.makeText(context, "Unable to get city information", Toast.LENGTH_SHORT).show()
@@ -146,7 +146,7 @@ fun SearchScreen(
                         // Handle the case where the user denies location permission
                         Toast.makeText(
                             context,
-                            "Location permission denied",
+                            "Location permission denied allow location access in app settings",
                             Toast.LENGTH_SHORT
                         ).show()
 
@@ -160,7 +160,7 @@ fun SearchScreen(
                 // Handle the case where the user denies permission
                 Toast.makeText(
                     context,
-                    "Location permission denied",
+                    "Location permission denied allow location access in app settings",
                     Toast.LENGTH_SHORT
                 ).show()
 
