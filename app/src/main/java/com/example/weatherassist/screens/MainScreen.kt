@@ -52,17 +52,17 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel, city:
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
         // Log information about loading state
-        Log.d("Haha", "loading: ${weatherData.data.toString()}")
+        Log.d("Message", "loading: ${weatherData.data.toString()}")
     } else {
         // Log information when weather data is available
-        Log.d("Haha", "MainScreen: ${weatherData.data.toString()}")
+        Log.d("Message", "MainScreen: ${weatherData.data.toString()}")
 
         // Show the main screen content using Scaffold
         Scaffold(
             topBar = {
                 // WeatherAppBar with title and search functionality
                 WeatherAppBar(
-                    title = "${weatherData.data!!.city.name}, ${weatherData.data!!.city.country}",
+                    title = weatherData.data?.let { "${it.city.name}, ${it.city.country}" } ?: "N/A",
                     isMainScreen = true,
                     navController = navController,
                     onSearchClicked = {
@@ -81,7 +81,6 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel, city:
         }
     }
 }
-
 @Composable
 fun MainScreenContent(
     modifier: Modifier = Modifier,
@@ -111,12 +110,12 @@ fun MainScreenContent(
         // Display humidity card with weather details
         HumidityCard(
             elevation = 4.dp,
-            wind = weatherData.data!!.list[0].wind.speed.toString(),
-            humidity = weatherData.data!!.list[0].main.humidity.toString(),
-            pressure = weatherData.data!!.list[0].main.pressure.toString(),
-            visibility = weatherData.data!!.list[0].visibility.toString(),
-            sunrise = timeFormat(weatherData.data!!.city.sunrise),
-            sunset = timeFormat(weatherData.data!!.city.sunset),
+            wind = weatherData.data?.list?.getOrNull(0)?.wind?.speed.toString() ?: "N/A",
+            humidity = weatherData.data?.list?.getOrNull(0)?.main?.humidity.toString() ?: "N/A",
+            pressure = weatherData.data?.list?.getOrNull(0)?.main?.pressure.toString() ?: "N/A",
+            visibility = weatherData.data?.list?.getOrNull(0)?.visibility.toString() ?: "N/A",
+            sunrise = weatherData.data?.city?.sunrise?.let { timeFormat(it) } ?: "N/A",
+            sunset = weatherData.data?.city?.sunset?.let { timeFormat(it) } ?: "N/A",
             modifier = Modifier
                 .padding(
                     top = 10.dp,
@@ -141,5 +140,4 @@ fun MainScreenContent(
         )
     }
 }
-
 

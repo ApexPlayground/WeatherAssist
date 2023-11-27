@@ -27,8 +27,10 @@ fun dayFormat(timeStamp: Int): String {
 }
 
 // Converts a string number to a formatted decimal string.
-fun convertDecimal(number: String): String {
-    val a = number.toFloat() / 1000 // Convert into kilometers
-    val formattedString = "%.1f".format(a)
-    return formattedString
+fun convertDecimal(number: String?): String {
+    // Check if the input number is not null and is a valid float
+    return number?.toFloatOrNull()?.let {
+        val a = it / 1000 // Convert into kilometers
+        "%.1f".format(a)
+    } ?: "N/A" // Provide a default value or handle the case where the input is null or not a valid float
 }

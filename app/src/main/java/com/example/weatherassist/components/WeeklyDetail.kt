@@ -27,20 +27,15 @@ import com.example.weatherassist.util.dayFormat
 import com.example.weatherassist.util.timeFormat
 
 @Composable
-// Composable function to display detailed weather information for each day in a week
 fun WeeklyDetail(
     weatherData: DataOrException<Weather, Boolean, Exception>,
     modifier: Modifier = Modifier
 ) {
-    // Composable function to display detailed weather information for each day in a week
-
     LazyColumn(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        items(weatherData.data!!.list) { dailyWeather ->
-
-            // Row to display weather details for each day
+        items(weatherData.data?.list.orEmpty()) { dailyWeather ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -48,7 +43,9 @@ fun WeeklyDetail(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val imageUrl = "https://openweathermap.org/img/wn/${dailyWeather.weather[0].icon}@2x.png"
+                // Safe call operator and nullish coalescing operator used to handle nulls
+                val imageUrl = dailyWeather.weather?.getOrNull(0)?.icon
+                    ?.let { "https://openweathermap.org/img/wn/${it}@2x.png" }
 
                 // Displaying the day and time of the weather information
                 Text(
@@ -63,11 +60,14 @@ fun WeeklyDetail(
 
                 // Column to display weather image and description
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    WeatherImage(imageUrl = imageUrl, modifier = Modifier.size(75.dp))
+                    // Safe call operator used to handle null imageUrl
+                    imageUrl?.let { WeatherImage(imageUrl = it, modifier = Modifier.size(75.dp)) }
+
+                    // Safe call operator used to handle null weather description
                     Text(
-                        dailyWeather.weather[0].description.replaceFirstChar {
+                        dailyWeather.weather?.getOrNull(0)?.description?.replaceFirstChar {
                             it.uppercase()
-                        },
+                        } ?: "Description not available",
                         modifier = Modifier,
                         fontSize = 12.sp
                     )
@@ -76,7 +76,8 @@ fun WeeklyDetail(
                 // Displaying the maximum and minimum temperatures for the day
                 Text(
                     buildAnnotatedString {
-                        append(dailyWeather.main.temp_max.toInt().toString() + "°/")
+                        append(dailyWeather.main?.temp_max?.toInt()?.toString() ?: "N/A")
+                        append("°/")
                         withStyle(
                             SpanStyle(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
@@ -84,7 +85,8 @@ fun WeeklyDetail(
                                 fontSize = 16.sp
                             )
                         ) {
-                            append(dailyWeather.main.temp_min.toInt().toString() + "°")
+                            append(dailyWeather.main?.temp_min?.toInt()?.toString() ?: "N/A")
+                            append("°")
                         }
                     },
                     fontWeight = FontWeight.Bold,

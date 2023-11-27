@@ -273,7 +273,7 @@ fun SearchField(
             searchState.value = it
         },
         label = {
-            Text(text = "Enter a city")
+            Text(text = "Enter a valid city")
         },
         // Trailing icon for the search functionality
         trailingIcon = {

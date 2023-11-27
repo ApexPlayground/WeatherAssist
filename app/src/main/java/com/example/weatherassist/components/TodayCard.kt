@@ -40,40 +40,46 @@ fun TodayCard(
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             // Obtain the image URL for weather icon
-            val imageUrl =
-                "https://openweathermap.org/img/wn/${weatherData.data!!.list[0].weather[0].icon}@2x.png"
+            val imageUrl = weatherData.data?.list?.getOrNull(0)?.weather?.getOrNull(0)?.icon
+                ?.let { "https://openweathermap.org/img/wn/${it}@2x.png" }
 
             // First Column
             Column() {
                 // Weather Image
-                WeatherImage(imageUrl = imageUrl, modifier = Modifier.size(95.dp))
+                imageUrl?.let { WeatherImage(imageUrl = it, modifier = Modifier.size(95.dp)) }
 
                 // Weather Description
+                val description =
+                    weatherData.data?.list?.getOrNull(0)?.weather?.getOrNull(0)?.description
+                        ?.replaceFirstChar {
+                            it.uppercase()
+                        } ?: "N/A"
                 Text(
-                    text = weatherData.data!!.list[0].weather[0].description.replaceFirstChar {
-                        it.uppercase()
-                    },
+                    text = description,
                     style = MaterialTheme.typography.titleLarge
                 )
             }
 
             // Second Column
             Column(
-                verticalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxHeight()
+                verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxHeight()
             ) {
                 // Date Information
                 Text("Today", style = MaterialTheme.typography.titleMedium)
 
                 // Current Temperature
+                val temperature = weatherData.data?.list?.getOrNull(0)?.main?.temp?.toInt()
                 Text(
-                    weatherData.data!!.list[0].main.temp.toInt().toString() + "°",
+                    text = temperature?.let { "$it°" } ?: "N/A",
                     style = MaterialTheme.typography.titleLarge,
                     fontSize = 45.sp
                 )
 
                 // Feels Like Temperature
+                val feelsLike = weatherData.data?.list?.getOrNull(0)?.main?.feels_like?.toInt()
                 Text(
-                    text = "Feels like " + weatherData.data!!.list[0].main.feels_like.toInt() + "°",
+                    text = feelsLike?.let { "Feels like $it°" } ?: "Not available",
                     style = MaterialTheme.typography.labelMedium,
                     fontSize = 16.sp
                 )
