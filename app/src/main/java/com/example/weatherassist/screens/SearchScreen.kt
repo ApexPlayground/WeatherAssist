@@ -1,5 +1,4 @@
 package com.example.weatherassist.screens
-
 // Import necessary dependencies
 import android.Manifest
 import android.app.Activity
@@ -44,8 +43,19 @@ import com.example.weatherassist.MainActivity
 import com.example.weatherassist.components.WeatherAppBar
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -58,11 +68,10 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
 
-
 // Function to request location updates
 fun requestLocationUpdates(
     context: Context,
-    onLocationResult: (Location) -> Unit,
+    onLocationResult: (Location, String) -> Unit,
     onPermissionDenied: () -> Unit
 ) {
     // Check if the location permission is granted
@@ -80,8 +89,27 @@ fun requestLocationUpdates(
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let {
-                    // Invoke the callback with the user's current location
-                    onLocationResult(it)
+                    val geocoder = Geocoder(context, Locale.getDefault())
+                    try {
+                        val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
+                        if (!addresses.isNullOrEmpty()) {
+                            // val country = addresses[0].countryName
+                            val city = addresses[0].locality
+                            // val area = addresses[0].subLocality
+                            val code = addresses[0].countryCode
+                            val locationString = "$city, $code"
+
+                            // Invoke the callback with the user's current location and locationString
+                            onLocationResult(it, locationString)
+                        } else {
+                            // Handle the case where address information is not available
+                            onLocationResult(it, "Location information not available")
+                        }
+                    } catch (e: IOException) {
+                        // Handle the case where an error occurs during geocoding
+                        onLocationResult(it, "Error getting location information")
+                        e.printStackTrace()
+                    }
                 }
             }
         }
@@ -102,6 +130,14 @@ fun SearchScreen(
     navController: NavController
 ) {
     val context = LocalContext.current
+    // Remember the current search state using rememberSaveable
+    val searchState = rememberSaveable {
+        mutableStateOf("")
+    }
+
+    // State variable to track whether to show the location permission denied dialog
+    var showLocationPermissionDeniedDialog by remember { mutableStateOf(false) }
+
     // Create an instance of ActivityResultLauncher
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -110,65 +146,38 @@ fun SearchScreen(
                 // Permission granted, request location updates
                 requestLocationUpdates(
                     context = context,
-                    onLocationResult = { location ->
-
-                        // Handle the user's current location (in string format)
-                        val latitude = location.latitude
-                        val longitude = location.longitude
-
-                        // Use reverse geocoding to get the city
-                        val geocoder = Geocoder(context, Locale.getDefault())
-                        try {
-                            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
-                            if (addresses != null) {
-                                if (addresses.isNotEmpty()) {
-                                    val country = addresses[0].countryName
-                                    val city = addresses[0].adminArea
-                                    val area = addresses[0].subLocality
-                                    val locationString = "Area: $area, City: $city, Country Name: $country"
-
-                                    Toast.makeText(context, locationString, Toast.LENGTH_SHORT).show()
-
-                                    // Use CoroutineScope to delay the execution for 8 seconds
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        delay(10000)
-                                    }
-                                } else {
-                                    Toast.makeText(context, "Unable to get city information", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        } catch (e: IOException) {
-                            Toast.makeText(context, "Error while getting city information", Toast.LENGTH_SHORT).show()
-                            e.printStackTrace()
-                        }
+                    onLocationResult = { _, locationString ->
+                        // Use a MutableState to update the Compose state
+                        searchState.value = locationString ?: ""
                     },
+
                     onPermissionDenied = {
-                        // Handle the case where the user denies location permission
-                        Toast.makeText(
-                            context,
-                            "Location permission denied allow location access in app settings",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        // Open app settings
-
+                        showLocationPermissionDeniedDialog = true
                     }
                 )
-
-
             } else {
-                // Handle the case where the user denies permission
-                Toast.makeText(
-                    context,
-                    "Location permission denied allow location access in app settings",
-                    Toast.LENGTH_SHORT
-                ).show()
-
+                // Handles the case where the user denies permission
+//                Toast.makeText(
+//                    context,
+//                    "To use this feature, you need to grant location permission.",
+//                    Toast.LENGTH_LONG
+//                ).show()
+                showLocationPermissionDeniedDialog = true
             }
         }
     )
-    Column {
 
+    // Show the dialog if the state variable is true
+    if (showLocationPermissionDeniedDialog) {
+        ShowLocationPermissionDeniedDialog(
+            onDismiss = {
+                // Reset the state variable to prevent showing the dialog repeatedly
+                showLocationPermissionDeniedDialog = false
+            }
+        )
+    }
+
+    Column {
         // WeatherAppBar is a custom component for the app bar
         WeatherAppBar(
             navController = navController,
@@ -176,13 +185,12 @@ fun SearchScreen(
             isMainScreen = false,
         )
 
-
-
         // SearchField is a custom component for the search field
         SearchField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
+            searchState = searchState,
             onSearch = {
                 // Navigate to the MainScreen with the search query as an argument
                 navController.navigate(WeatherScreens.MainScreen.name + "/${it}") {
@@ -195,21 +203,60 @@ fun SearchScreen(
         )
 
         // Button to locate the user
-        LocateMeButton(locationPermissionLauncher)
+        LocateMeButton(locationPermissionLauncher) { location, locationString ->
+            // Update the search state with the location string
+            searchState.value = locationString ?: ""
+        }
     }
+}
+
+@Composable
+fun ShowLocationPermissionDeniedDialog(
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = {
+            Text(
+                text = "Location Permission Denied",
+                style = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary)
+            )
+        },
+        text = {
+            Column {
+                Text(
+                    text = "To use this feature, you need to grant location permission.",
+                    style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.primary)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Please go to the app settings and enable location.",
+                    style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.primary)
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    // Open app settings when the user clicks the "Go to Settings" button
+                    (context as? Activity)?.openAppSettings()
+                }
+            ) {
+                Text("Go to Settings", style = MaterialTheme.typography.button)
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchField(
     onSearch: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    searchState: MutableState<String>
 ) {
-    // Remember the current search state using rememberSaveable
-    val searchState = rememberSaveable {
-        mutableStateOf("")
-    }
-
     // Determine if the input is valid (not empty)
     val isValid = remember(searchState.value) {
         searchState.value.trim().isNotEmpty()
@@ -258,7 +305,10 @@ fun SearchField(
 }
 
 @Composable
-fun LocateMeButton(locationPermissionLauncher: ActivityResultLauncher<String>) {
+fun LocateMeButton(
+    locationPermissionLauncher: ActivityResultLauncher<String>,
+    onLocationReceived: (Location, String?) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -272,7 +322,13 @@ fun LocateMeButton(locationPermissionLauncher: ActivityResultLauncher<String>) {
                     Manifest.permission.ACCESS_FINE_LOCATION,
                 )
             },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+//            // Customize the button colors
+//            colors = ButtonDefaults.buttonColors(
+//               // backgroundColor = Color.Black,
+//               contentColor = Color.White,
+//                containerColor = Color.Black
+//            )
         ) {
             Icon(
                 imageVector = Icons.Default.Place,
@@ -286,7 +342,7 @@ fun LocateMeButton(locationPermissionLauncher: ActivityResultLauncher<String>) {
     }
 }
 
-
+// Extension function to open the app settings
 fun Activity.openAppSettings() {
     Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
