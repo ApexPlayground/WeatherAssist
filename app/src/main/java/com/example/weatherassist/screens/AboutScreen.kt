@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -44,7 +46,7 @@ fun AboutScreen(navController: NavHostController) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
+                   .fillMaxHeight(0.4f),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -113,6 +115,37 @@ fun AboutScreen(navController: NavHostController) {
                     )
                 }
             }
+//
+//            Row(
+//                modifier = Modifier
+//                    .padding(16.dp)
+//                    .fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceEvenly,
+//            ) {
+//                // App Version
+//                Column (
+//                    modifier = Modifier
+//                        .padding(top = 80.dp)
+//
+//                ){
+//
+//                    Text(
+//                        text = "App Version",
+//                        style = MaterialTheme.typography.titleLarge.copy(
+//                            color = MaterialTheme.colorScheme.onSurface
+//                        )
+//                    )
+//                    Text(
+//                        text = "1.0.0",
+//                        style = MaterialTheme.typography.bodyLarge.copy(
+//                            color = MaterialTheme.colorScheme.onSurface
+//                        ),
+//                        textAlign = TextAlign.Center
+//                    )
+//                }
+//            }
+
         }
     }
 }
