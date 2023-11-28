@@ -62,7 +62,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel, city:
             topBar = {
                 // WeatherAppBar with title and search functionality
                 WeatherAppBar(
-                    title = weatherData.data?.let { "${it.city.name}, ${it.city.country}" } ?: "N/A",
+                    title = weatherData.data?.let { "${it.city.name}, ${it.city.country}" } ?: "Invalid City",
                     isMainScreen = true,
                     navController = navController,
                     onSearchClicked = {
@@ -102,7 +102,8 @@ fun MainScreenContent(
                 .padding(
                     top = 10.dp,
                     start = 10.dp,
-                    end = 10.dp
+                    end = 10.dp,
+                    bottom = 20.dp
                 )
                 .height(150.dp)
         )
@@ -125,7 +126,7 @@ fun MainScreenContent(
         )
 
         // Display text for the upcoming week
-        Text("This Week", modifier = Modifier.padding(top = 5.dp))
+        Text("Upcoming Forecast", modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
 
         // Display weekly weather details using WeeklyDetail composable
         WeeklyDetail(
