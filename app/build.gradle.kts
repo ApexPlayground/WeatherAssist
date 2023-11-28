@@ -66,7 +66,7 @@ android {
 // Project dependencies
 dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
-    // Define Room version
+    //for milestone 3
     val roomVersion = "2.6.0"
 
     val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
@@ -119,12 +119,7 @@ dependencies {
     // JSON Converter for Retrofit
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    // Room dependencies for database
-    implementation("androidx.room:room-runtime:$roomVersion")
 
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-
-    kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
 
     // Preferences Datastore
