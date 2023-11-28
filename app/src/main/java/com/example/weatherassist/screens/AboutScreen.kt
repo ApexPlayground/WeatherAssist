@@ -115,36 +115,40 @@ fun AboutScreen(navController: NavHostController) {
                     )
                 }
             }
-//
-//            Row(
-//                modifier = Modifier
-//                    .padding(16.dp)
-//                    .fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceEvenly,
-//            ) {
-//                // App Version
-//                Column (
-//                    modifier = Modifier
-//                        .padding(top = 80.dp)
-//
-//                ){
-//
-//                    Text(
-//                        text = "App Version",
-//                        style = MaterialTheme.typography.titleLarge.copy(
-//                            color = MaterialTheme.colorScheme.onSurface
-//                        )
-//                    )
-//                    Text(
-//                        text = "1.0.0",
-//                        style = MaterialTheme.typography.bodyLarge.copy(
-//                            color = MaterialTheme.colorScheme.onSurface
-//                        ),
-//                        textAlign = TextAlign.Center
-//                    )
-//                }
-//            }
+
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                // App Version
+                Column (
+                    modifier = Modifier
+                        .padding(top = 25.dp)
+
+                ){
+
+                    Text(
+                        text = "About App",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+
+                        ), textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp)
+                    )
+                    Text(
+                        text = "Weather Assist is a modern Android application designed to provide users with accurate and detailed weather information.\nVersion: 1.0.0",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
         }
     }
