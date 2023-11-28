@@ -43,6 +43,7 @@ import com.example.weatherassist.MainActivity
 import com.example.weatherassist.components.WeatherAppBar
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -56,6 +57,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -202,10 +204,19 @@ fun SearchScreen(
             }
         )
 
-        // Button to locate the user
-        LocateMeButton(locationPermissionLauncher) { location, locationString ->
-            // Update the search state with the location string
-            searchState.value = locationString ?: ""
+        // Box for displaying button
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f),
+            contentAlignment = Alignment.Center
+        ) {
+
+            // Button to locate the user
+            LocateMeButton(locationPermissionLauncher) { location, locationString ->
+                // Update the search state with the location string
+                searchState.value = locationString ?: ""
+            }
         }
     }
 }
@@ -217,23 +228,30 @@ fun ShowLocationPermissionDeniedDialog(
     val context = LocalContext.current
 
     AlertDialog(
+        backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface,
         onDismissRequest = { onDismiss() },
         title = {
             Text(
                 text = "Location Permission Denied",
-                style = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary)
+                style = MaterialTheme.typography.h6.copy(
+                    color =  androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                )
             )
         },
         text = {
             Column {
                 Text(
                     text = "To use this feature, you need to grant location permission.",
-                    style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.primary)
+                    style = MaterialTheme.typography.body1.copy(
+                        color =androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                    )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Please go to the app settings and enable location.",
-                    style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.primary)
+                    style = MaterialTheme.typography.body1.copy(
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                    )
                 )
             }
         },
@@ -244,10 +262,16 @@ fun ShowLocationPermissionDeniedDialog(
                     (context as? Activity)?.openAppSettings()
                 }
             ) {
-                Text("Go to Settings", style = MaterialTheme.typography.button)
+                Text("Go to Settings",
+                    style = MaterialTheme.typography.button.copy(color = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface
+                )
+                )
             }
-        }
+        },
     )
+
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -261,6 +285,7 @@ fun SearchField(
     val isValid = remember(searchState.value) {
         searchState.value.trim().isNotEmpty()
     }
+    val context = LocalContext.current
 
     // Get the current keyboard controller
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -282,7 +307,15 @@ fun SearchField(
                 contentDescription = "Search",
                 // Make the icon clickable and trigger the search
                 modifier = Modifier.clickable {
-                    onSearch(searchState.value)
+                    if (isValid) {
+                        // If the input is valid, trigger the search, clear the input, and hide the keyboard
+                        onSearch(searchState.value)
+                        searchState.value = ""
+                        keyboardController?.hide()
+                    } else {
+                        // If the input is not valid, show a toast to enter city
+                        Toast.makeText(context, "Please enter a city", Toast.LENGTH_LONG).show()
+                    }
                 }
             )
         },
@@ -291,18 +324,21 @@ fun SearchField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         // Define keyboard actions to handle the search action
         keyboardActions = KeyboardActions {
-            if (!isValid) {
-                // If the input is not valid, do nothing
-                return@KeyboardActions
-            } else {
+            if (isValid) {
                 // If the input is valid, trigger the search, clear the input, and hide the keyboard
                 onSearch(searchState.value)
                 searchState.value = ""
                 keyboardController?.hide()
+            } else {
+                // If the input is not valid, show a toast to enter city
+                Toast.makeText(context, "Please enter a city", Toast.LENGTH_LONG).show()
             }
         }
     )
 }
+
+
+
 
 @Composable
 fun LocateMeButton(
@@ -316,6 +352,7 @@ fun LocateMeButton(
         verticalArrangement = Arrangement.Center
     ) {
         Button(
+
             onClick = {
                 // Call the requestLocation function when the button is clicked
                 locationPermissionLauncher.launch(
