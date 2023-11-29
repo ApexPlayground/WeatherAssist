@@ -126,7 +126,7 @@ fun MainScreenContent(
         )
 
         // Display text for the upcoming week
-        Text("Upcoming Forecast", modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
+        Text("Upcoming Forecasts", modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
 
         // Display weekly weather details using WeeklyDetail composable
         WeeklyDetail(

@@ -1,29 +1,15 @@
 package com.example.weatherassist.screens
-// Import necessary dependencies
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
-import android.net.Uri
-import android.os.Looper
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -39,99 +25,23 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.weatherassist.MainActivity
 import com.example.weatherassist.components.WeatherAppBar
-import android.provider.Settings
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.window.DialogProperties
-import androidx.core.content.ContextCompat
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.io.IOException
-import java.util.Locale
 
-// Function to request location updates
-fun requestLocationUpdates(
-    context: Context,
-    onLocationResult: (Location, String) -> Unit,
-    onPermissionDenied: () -> Unit
-) {
-    // Check if the location permission is granted
-    if (ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    ) {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-        val locationRequest = LocationRequest.create().apply {
-
-        }
-
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult.lastLocation?.let {
-                    val geocoder = Geocoder(context, Locale.getDefault())
-                    try {
-                        val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
-                        if (!addresses.isNullOrEmpty()) {
-                            // val country = addresses[0].countryName
-                            val city = addresses[0].locality
-                            // val area = addresses[0].subLocality
-                            val code = addresses[0].countryCode
-                            val locationString = "$city, $code"
-
-                            // Invoke the callback with the user's current location and locationString
-                            onLocationResult(it, locationString)
-                        } else {
-                            // Handle the case where address information is not available
-                            onLocationResult(it, "Location information not available")
-                        }
-                    } catch (e: IOException) {
-                        // Handle the case where an error occurs during geocoding
-                        onLocationResult(it, "Error getting location information")
-                        e.printStackTrace()
-                    }
-                }
-            }
-        }
-
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-    } else {
-        // If permission is not granted, request it
-        onPermissionDenied()
-    }
-}
 
 @Composable
 fun SearchScreen(
     navController: NavController
 ) {
+    // Get the current context
     val context = LocalContext.current
+
     // Remember the current search state using rememberSaveable
     val searchState = rememberSaveable {
         mutableStateOf("")
@@ -140,7 +50,7 @@ fun SearchScreen(
     // State variable to track whether to show the location permission denied dialog
     var showLocationPermissionDeniedDialog by remember { mutableStateOf(false) }
 
-    // Create an instance of ActivityResultLauncher
+    // Create an instance of ActivityResultLauncher to request location permission
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted: Boolean ->
@@ -152,22 +62,16 @@ fun SearchScreen(
                         // Use a MutableState to update the Compose state
                         searchState.value = locationString ?: ""
                     },
-
-                    onPermissionDenied = {
-                        showLocationPermissionDeniedDialog = true
-                    }
+                    onPermissionDenied = {}
                 )
             } else {
                 // Handles the case where the user denies permission
-//                Toast.makeText(
-//                    context,
-//                    "To use this feature, you need to grant location permission.",
-//                    Toast.LENGTH_LONG
-//                ).show()
                 showLocationPermissionDeniedDialog = true
             }
         }
     )
+
+
 
     // Show the dialog if the state variable is true
     if (showLocationPermissionDeniedDialog) {
@@ -179,6 +83,7 @@ fun SearchScreen(
         )
     }
 
+    // Compose UI elements
     Column {
         // WeatherAppBar is a custom component for the app bar
         WeatherAppBar(
@@ -204,14 +109,13 @@ fun SearchScreen(
             }
         )
 
-        // Box for displaying button
+        // Box for displaying the Locate Me button
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.8f),
             contentAlignment = Alignment.Center
         ) {
-
             // Button to locate the user
             LocateMeButton(locationPermissionLauncher) { location, locationString ->
                 // Update the search state with the location string
@@ -221,58 +125,7 @@ fun SearchScreen(
     }
 }
 
-@Composable
-fun ShowLocationPermissionDeniedDialog(
-    onDismiss: () -> Unit
-) {
-    val context = LocalContext.current
 
-    AlertDialog(
-        backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface,
-        onDismissRequest = { onDismiss() },
-        title = {
-            Text(
-                text = "Location Permission Denied",
-                style = MaterialTheme.typography.h6.copy(
-                    color =  androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                )
-            )
-        },
-        text = {
-            Column {
-                Text(
-                    text = "To use this feature, you need to grant location permission.",
-                    style = MaterialTheme.typography.body1.copy(
-                        color =androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                    )
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Please go to the app settings and enable location.",
-                    style = MaterialTheme.typography.body1.copy(
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                    )
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    // Open app settings when the user clicks the "Go to Settings" button
-                    (context as? Activity)?.openAppSettings()
-                }
-            ) {
-                Text("Go to Settings",
-                    style = MaterialTheme.typography.button.copy(color = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface
-                )
-                )
-            }
-        },
-    )
-
-
-
-}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -338,51 +191,3 @@ fun SearchField(
 }
 
 
-
-
-@Composable
-fun LocateMeButton(
-    locationPermissionLauncher: ActivityResultLauncher<String>,
-    onLocationReceived: (Location, String?) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(
-
-            onClick = {
-                // Call the requestLocation function when the button is clicked
-                locationPermissionLauncher.launch(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                )
-            },
-            modifier = Modifier.padding(16.dp),
-//            // Customize the button colors
-//            colors = ButtonDefaults.buttonColors(
-//               // backgroundColor = Color.Black,
-//               contentColor = Color.White,
-//                containerColor = Color.Black
-//            )
-        ) {
-            Icon(
-                imageVector = Icons.Default.Place,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(end = 8.dp)
-            )
-            Text(text = "Locate Me")
-        }
-    }
-}
-
-// Extension function to open the app settings
-fun Activity.openAppSettings() {
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).also(::startActivity)
-}

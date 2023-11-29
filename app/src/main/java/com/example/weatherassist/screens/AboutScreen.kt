@@ -1,5 +1,4 @@
 package com.example.weatherassist.screens
-
 // Import necessary dependencies
 import android.content.Intent
 import android.net.Uri
@@ -36,6 +35,7 @@ fun AboutScreen(navController: NavHostController) {
 
     // Scaffold with top bar and content
     Scaffold(topBar = {
+        // WeatherAppBar is a custom component for the app bar
         WeatherAppBar(navController = navController, title = "About", isMainScreen = false)
     }) {
 
@@ -46,7 +46,7 @@ fun AboutScreen(navController: NavHostController) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                   .fillMaxHeight(0.4f),
+                    .fillMaxHeight(0.4f),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -96,14 +96,12 @@ fun AboutScreen(navController: NavHostController) {
                 // Gmail icon and link
                 IconButton(
                     onClick = {
-
                         // Create an intent to send an email
                         val intent = Intent()
                         intent.setAction(Intent.ACTION_SENDTO)
                         intent.data = Uri.parse("mailto:")
                         intent.putExtra(Intent.EXTRA_EMAIL, "ogbedivine7@gmail.com")
                         context.startActivity(intent)
-
                     }, modifier = Modifier
                         .size(50.dp)
                         .padding(4.dp)
@@ -116,6 +114,7 @@ fun AboutScreen(navController: NavHostController) {
                 }
             }
 
+            // Row for displaying the app description and version
             Row(
                 modifier = Modifier
                     .padding(16.dp)
@@ -127,19 +126,18 @@ fun AboutScreen(navController: NavHostController) {
                 Column (
                     modifier = Modifier
                         .padding(top = 25.dp)
-
-                ){
-
+                ) {
+                    // Title
                     Text(
                         text = "About App",
                         style = MaterialTheme.typography.titleLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface
-
                         ), textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 10.dp)
                     )
+                    // App information
                     Text(
                         text = "Weather Assist is a modern Android application designed to provide users with accurate and detailed weather information.\nVersion: 1.0.0",
                         style = MaterialTheme.typography.bodyLarge.copy(
@@ -149,7 +147,6 @@ fun AboutScreen(navController: NavHostController) {
                     )
                 }
             }
-
         }
     }
 }

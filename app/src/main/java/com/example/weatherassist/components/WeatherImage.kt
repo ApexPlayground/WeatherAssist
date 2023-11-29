@@ -3,6 +3,7 @@ package com.example.weatherassist.components
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 
 @Composable
@@ -12,7 +13,7 @@ fun WeatherImage(imageUrl: String, modifier: Modifier = Modifier) {
 
     // Using the `Image` composable with the `rememberImagePainter` to load and display the image
     Image(
-        painter = rememberImagePainter(imageUrl),
+        painter = rememberAsyncImagePainter(imageUrl),
         contentDescription = "Weather Image",
         modifier = modifier
     )
