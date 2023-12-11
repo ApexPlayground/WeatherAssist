@@ -8,6 +8,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.room.Room
+import com.example.weatherassist.data.DatabaseDao
+import com.example.weatherassist.db.WeatherDatabase
 import com.example.weatherassist.network.WeatherApi
 import com.example.weatherassist.pref.UserPref
 import com.example.weatherassist.pref.UserPrefImpl
@@ -35,9 +38,6 @@ object AppModule {
         .build()
         .create(WeatherApi::class.java)
 
-
-
-
     // Provides a singleton instance of the DataStore<Preferences> for storing key-value preferences.
     @Provides
     @Singleton
@@ -53,4 +53,20 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserPref(dataStore: DataStore<Preferences>): UserPref = UserPrefImpl(dataStore)
+
+    // Provides a singleton instance of the DatabaseDao interface for database operations.
+    @Provides
+    @Singleton
+    fun provideFavoriteDao(database: WeatherDatabase): DatabaseDao = database.getFavoriteDao()
+
+    // Provides a singleton instance of the WeatherDatabase class for room database operations.
+    @Provides
+    @Singleton
+    fun provideWeatherDatabase(@ApplicationContext context: Context): WeatherDatabase =
+        Room.databaseBuilder(
+            context,
+            WeatherDatabase::class.java,
+            "weather_db"
+        ).fallbackToDestructiveMigration()
+            .build()
 }
