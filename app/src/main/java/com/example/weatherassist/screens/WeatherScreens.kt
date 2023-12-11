@@ -8,4 +8,5 @@ enum class WeatherScreens {
     SearchScreen,    // Screen for searching and entering location
     AboutScreen,     // Screen providing information about the developer
     SettingScreen,   // Screen for configuring app settings
+    FavoriteScreen, // Favourite Screen
 }
