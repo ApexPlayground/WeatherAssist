@@ -94,8 +94,7 @@ fun WeeklyDetail(
                 )
             }
 
-            // Divider between each day's weather information
-            Divider()
+
         }
     }
 }
