@@ -58,7 +58,8 @@ fun ShowLocationPermissionDeniedDialog(
                 }
             ) {
                 Text("Go to Settings",
-                    style = androidx.compose.material.MaterialTheme.typography.button.copy(color = MaterialTheme.colorScheme.inverseOnSurface
+                    style = androidx.compose.material.MaterialTheme.typography.button.copy(
+                        color = MaterialTheme.colorScheme.inverseOnSurface
                     )
                 )
             }

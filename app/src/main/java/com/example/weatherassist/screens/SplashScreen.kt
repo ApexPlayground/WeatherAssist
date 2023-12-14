@@ -36,9 +36,9 @@ fun SplashScreen(
 ) {
     // Collecting the default city from PreferencesViewModel
     val defaultCity = preferencesViewModel.defaultCity.collectAsState()
-    Log.d("Hahah", ": ${defaultCity.value}")
+    Log.d("Message", ": ${defaultCity.value}")
 
-    // Animatable property for scaling animation
+    // scaling animation
     val scale = remember {
         Animatable(initialValue = 0f)
     }
@@ -54,7 +54,7 @@ fun SplashScreen(
             )
         )
         delay(200L)
-        Log.d("Hahah", "SplashScreen: ${defaultCity.value}")
+        Log.d("Message", "SplashScreen: ${defaultCity.value}")
 
         // Navigating to the MainScreen with the default city as an argument
         navController.navigate(WeatherScreens.MainScreen.name + "/${defaultCity.value}") {

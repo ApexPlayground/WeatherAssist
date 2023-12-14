@@ -2,6 +2,7 @@ package com.example.weatherassist.components
 
 //Import statements
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -28,9 +29,9 @@ fun TodayCard(
     weatherData: DataOrException<Weather, Boolean, Exception>
 ) {
     // Card composable for displaying today's weather information
-    Card(
+    Box(
         modifier = modifier,
-        elevation = CardDefaults.cardElevation(elevation)
+
     ) {
         // Row to arrange child composable horizontally with space evenly distributed
         Row(

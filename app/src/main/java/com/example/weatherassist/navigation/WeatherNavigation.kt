@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.weatherassist.screens.AboutScreen
+import com.example.weatherassist.screens.FavoriteScreen
 import com.example.weatherassist.screens.MainScreen
 import com.example.weatherassist.screens.SearchScreen
 import com.example.weatherassist.screens.SettingsScreen
@@ -64,6 +65,12 @@ fun WeatherNavigation() {
         composable(WeatherScreens.SearchScreen.name) {
             // Call the SearchScreen composable with the navigation controller
             SearchScreen(navController = navController)
+        }
+
+        //Composable for FavouriteScreen
+        composable(WeatherScreens.FavoriteScreen.name) {
+            // Call the FavouriteScreen composable with the navigation controller
+            FavoriteScreen(navController)
         }
 
         // Composable for AboutScreen

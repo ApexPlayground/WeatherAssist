@@ -27,7 +27,7 @@ fun CustomDialog(
 ) {
     // Dialog composable for a custom dialog
     Dialog(onDismissRequest = { setShowDialog(false) }) {
-        // Column to arrange child composables vertically
+        // Column to arrange child composable vertically
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             // Apply styling to the column
