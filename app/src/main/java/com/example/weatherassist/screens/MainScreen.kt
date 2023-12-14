@@ -87,6 +87,7 @@ fun MainScreenContent(
     weatherData: DataOrException<Weather, Boolean, Exception>
 ) {
 
+
     // Column to arrange UI elements vertically in the center
     Column(
         modifier = modifier,
@@ -110,7 +111,7 @@ fun MainScreenContent(
 
         // Display humidity card with weather details
         HumidityCard(
-            elevation = 4.dp,
+           elevation = 4.dp,
             wind = weatherData.data?.list?.getOrNull(0)?.wind?.speed.toString() ?: "N/A",
             humidity = weatherData.data?.list?.getOrNull(0)?.main?.humidity.toString() ?: "N/A",
             pressure = weatherData.data?.list?.getOrNull(0)?.main?.pressure.toString() ?: "N/A",
