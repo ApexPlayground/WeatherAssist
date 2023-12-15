@@ -139,7 +139,7 @@ fun AboutScreen(navController: NavHostController) {
                     )
                     // App information
                     Text(
-                        text = "Weather Assist is a modern Android application designed to provide users with accurate and detailed weather information.\nVersion: 1.0.0",
+                        text = "Weather Assist is a modern Android application designed to provide users with accurate and detailed weather information.\nVersion: 1.0.1",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface
                         ),

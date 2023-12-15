@@ -1,4 +1,3 @@
-// Package declaration for the data-related components of the WeatherAssist app.
 package com.example.weatherassist.data
 
 import androidx.room.Dao
