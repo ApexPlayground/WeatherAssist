@@ -30,13 +30,13 @@ import androidx.navigation.NavHostController
 import com.example.weatherassist.components.WeatherAppBar
 import com.example.weatherassist.viewModel.FavoriteViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun FavoriteScreen(
     navController: NavHostController,
     favoriteViewModel: FavoriteViewModel = hiltViewModel()
 ) {
-    // Scaffold is a layout structure in Material Design that contains a top bar, content, and optionally a bottom bar
+    // Scaffold layout
     Scaffold(topBar = {
         // Custom WeatherAppBar with navigation controls
         WeatherAppBar(
@@ -48,7 +48,7 @@ fun FavoriteScreen(
         // Collect the list of favorite cities from the view model
         val favList = favoriteViewModel.favoriteList.collectAsState().value
 
-        // LazyColumn is a vertically scrolling list that only composes and lays out the currently visible items
+        // LazyColumn
         LazyColumn(
             Modifier.padding(it)
                 .padding(horizontal = 10.dp)
@@ -77,7 +77,7 @@ fun FavoriteScreen(
                 }
 
                 // Add spacing between rows
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(13.dp))
             }
         }
     }
