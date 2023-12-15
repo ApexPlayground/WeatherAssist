@@ -37,15 +37,11 @@ class WeatherRepository @Inject constructor(private val api: WeatherApi, private
     // Function to retrieve all favorite items from the local database
     fun getAllFavorites() = dao.getAllFavorites()
 
-    // Function to retrieve a favorite item by its city from the local database
-    suspend fun getFavoriteById(city: String) = dao.getFavoriteById(city)
-
     // Function to insert or update a favorite item in the local database
     suspend fun upsertFavorite(favoriteItem: Favorite) = dao.upsertFavorite(favoriteItem)
 
     // Function to delete a specific favorite item from the local database
     suspend fun deleteFavorite(favoriteItem: Favorite) = dao.deleteFavorite(favoriteItem)
 
-    // Function to delete all favorite items from the local database
-    suspend fun deleteAllFavorites() = dao.deleteAllFavorites()
 }
+
